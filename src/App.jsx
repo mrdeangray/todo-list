@@ -73,7 +73,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <h1 className="text-3xl font-bold mb-8">Todo App with Sub-Todos</h1>
+      <h1 className="text-xl font-bold mb-8">Todo-List</h1>
       <div className="flex mb-4">
         <input
           type="text"
