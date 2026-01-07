@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, addDoc, setDoc, doc, onSnapshot } from "firebase/firestore";
 import { db } from "./firebase";
 import TodoList from "./components/TodoList";
+import Header from "./components/Header";
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -78,33 +79,35 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <h1 className="text-xl font-bold mb-8">Todo-List</h1>
-      <div className="flex mb-4">
-        <input
-          type="text"
-          className="border rounded px-2 py-1 mr-2"
-          placeholder="Enter new todo..."
-          value={newTodoText}
-          onChange={e => setNewTodoText(e.target.value)}
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Header />
+      <main className="flex flex-col items-center py-10 flex-1">
+        <div className="flex mb-4">
+          <input
+            type="text"
+            className="border rounded px-2 py-1 mr-2"
+            placeholder="Enter new todo..."
+            value={newTodoText}
+            onChange={e => setNewTodoText(e.target.value)}
+          />
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={handleAddTodo}
+          >
+            Add Todo
+          </button>
+        </div>
+        <TodoList
+          todos={todos}
+          onAddTodo={handleAddTodo}
+          onAddSubTodo={handleAddSubTodo}
+          onToggleTodo={handleToggleTodo}
+          onToggleSubTodo={handleToggleSubTodo}
+          subTodoInputs={subTodoInputs}
+          setSubTodoInputs={setSubTodoInputs}
+          setTodos={setTodos}
         />
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={handleAddTodo}
-        >
-          Add Todo
-        </button>
-      </div>
-      <TodoList
-        todos={todos}
-        onAddTodo={handleAddTodo}
-        onAddSubTodo={handleAddSubTodo}
-        onToggleTodo={handleToggleTodo}
-        onToggleSubTodo={handleToggleSubTodo}
-        subTodoInputs={subTodoInputs}
-        setSubTodoInputs={setSubTodoInputs}
-        setTodos={setTodos}
-      />
+      </main>
     </div>
   );
 }
