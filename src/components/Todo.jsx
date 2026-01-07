@@ -121,11 +121,24 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
                 onChange={handleInputChange}
               />
               <button
-                className="bg-green-500 text-white rounded-full flex items-center justify-center w-6 h-6"
+                className="bg-green-500 text-white rounded-full flex items-center justify-center w-6 h-6 mr-1"
                 onClick={handleAddSubTodo}
-                aria-label="Add Sub-Todo"
+                aria-label="Save Sub-Todo"
+                title="Save"
               >
-                <span style={{fontSize: '1em', fontWeight: 'bold', lineHeight: '1'}}>+</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </button>
+              <button
+                className="bg-gray-300 text-gray-700 rounded-full flex items-center justify-center w-6 h-6"
+                onClick={() => { setShowSubInput(false); setSubTodoInputs(inputs => ({ ...inputs, [todo.id]: "" })); }}
+                aria-label="Cancel Sub-Todo"
+                title="Cancel"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </>
           )}
