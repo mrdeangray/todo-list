@@ -4,6 +4,7 @@ import { db } from "../firebase";
 
 const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs, setSubTodoInputs, setTodos, onDeleteTodo }) => {
   const [showSubInput, setShowSubInput] = useState(false);
+  const subInputRef = React.useRef(null);
   React.useEffect(() => {
     setShowSubInput(false);
   }, [todo]);
@@ -99,7 +100,12 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
           {!showSubInput ? (
             <button
               className="bg-green-500 text-white rounded-full flex items-center justify-center w-6 h-6"
-              onClick={() => setShowSubInput(true)}
+              onClick={() => {
+                setShowSubInput(true);
+                setTimeout(() => {
+                  if (subInputRef.current) subInputRef.current.focus();
+                }, 0);
+              }}
               aria-label="Show Sub-Todo Input"
             >
               <span style={{fontSize: '1em', fontWeight: 'bold', lineHeight: '1'}}>+</span>
@@ -107,6 +113,7 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
           ) : (
             <>
               <input
+                ref={subInputRef}
                 type="text"
                 className="border rounded px-2 py-1 mr-2"
                 placeholder="Enter sub-todo..."
