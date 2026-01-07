@@ -46,12 +46,12 @@ function App() {
   };
 
   // Add a sub-todo to Firestore
-  const handleAddSubTodo = async (todoId) => {
+  const handleAddSubTodo = async (todoId, subText) => {
     const todo = todos.find(t => t.id === todoId);
-    if (!todo) return;
+    if (!todo || !subText.trim()) return;
     const newSub = {
       id: Date.now(),
-      text: `Sub-Todo ${todo.subTodos.length + 1}`,
+      text: subText,
       completed: false
     };
     const updated = {

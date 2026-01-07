@@ -27,7 +27,7 @@ const TodoList = ({ todos, onAddSubTodo, onToggleTodo, onToggleSubTodo, onAddTod
         <Todo
           key={todo.id}
           todo={todo}
-          onAddSubTodo={() => onAddSubTodo(todo.id)}
+          onAddSubTodo={subText => onAddSubTodo(todo.id, subText)}
           onToggleTodo={() => handleToggleTodoWithSubs(todo.id)}
           onToggleSubTodo={onToggleSubTodo}
           subTodoInputs={subTodoInputs}

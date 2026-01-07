@@ -1,7 +1,12 @@
 import React, { useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs, setSubTodoInputs, setTodos, onDeleteTodo }) => {
-    const [showSubInput, setShowSubInput] = useState(false);
+  const [showSubInput, setShowSubInput] = useState(false);
+  React.useEffect(() => {
+    setShowSubInput(false);
+  }, [todo]);
   const [isEditingTodo, setIsEditingTodo] = useState(false);
   const [editTodoText, setEditTodoText] = useState(todo.text);
   const [editingSubId, setEditingSubId] = useState(null);
@@ -10,25 +15,9 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
   const handleInputChange = e => {
     setSubTodoInputs(inputs => ({ ...inputs, [todo.id]: e.target.value }));
   };
-  const handleAddSubTodo = () => {
+  const handleAddSubTodo = async () => {
     if (!subInput.trim()) return;
-    setTodos(todos =>
-      todos.map(t =>
-        t.id === todo.id
-          ? {
-              ...t,
-              subTodos: [
-                ...t.subTodos,
-                {
-                  id: Date.now(),
-                  text: subInput,
-                  completed: false
-                }
-              ]
-            }
-          : t
-      )
-    );
+    await onAddSubTodo(subInput);
     setSubTodoInputs(inputs => ({ ...inputs, [todo.id]: "" }));
     setShowSubInput(false);
   };
@@ -44,18 +33,16 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
     setEditingSubId(sub.id);
     setEditSubText(sub.text);
   };
-  const handleSaveSub = (subId) => {
-    setTodos(todos => todos.map(t => t.id === todo.id ? {
-      ...t,
-      subTodos: t.subTodos.map(s => s.id === subId ? { ...s, text: editSubText } : s)
-    } : t));
+  const handleSaveSub = async (subId) => {
+    const updatedSubTodos = todo.subTodos.map(s => s.id === subId ? { ...s, text: editSubText } : s);
+    const updated = { ...todo, subTodos: updatedSubTodos };
+    await setDoc(doc(db, "todos", todo.id), updated);
     setEditingSubId(null);
   };
-  const handleDeleteSub = (subId) => {
-    setTodos(todos => todos.map(t => t.id === todo.id ? {
-      ...t,
-      subTodos: t.subTodos.filter(s => s.id !== subId)
-    } : t));
+  const handleDeleteSub = async (subId) => {
+    const updatedSubTodos = todo.subTodos.filter(s => s.id !== subId);
+    const updated = { ...todo, subTodos: updatedSubTodos };
+    await setDoc(doc(db, "todos", todo.id), updated);
     setEditingSubId(null);
   };
   return (
