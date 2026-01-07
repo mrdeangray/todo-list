@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs, setSubTodoInputs, setTodos }) => {
+  const [isEditingTodo, setIsEditingTodo] = useState(false);
+  const [editTodoText, setEditTodoText] = useState(todo.text);
+  const [editingSubId, setEditingSubId] = useState(null);
+  const [editSubText, setEditSubText] = useState("");
   const subInput = subTodoInputs[todo.id] || "";
   const handleInputChange = e => {
     setSubTodoInputs(inputs => ({ ...inputs, [todo.id]: e.target.value }));
@@ -26,6 +30,25 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
     );
     setSubTodoInputs(inputs => ({ ...inputs, [todo.id]: "" }));
   };
+  const handleEditTodo = () => {
+    setIsEditingTodo(true);
+    setEditTodoText(todo.text);
+  };
+  const handleSaveTodo = () => {
+    setTodos(todos => todos.map(t => t.id === todo.id ? { ...t, text: editTodoText } : t));
+    setIsEditingTodo(false);
+  };
+  const handleEditSub = (sub) => {
+    setEditingSubId(sub.id);
+    setEditSubText(sub.text);
+  };
+  const handleSaveSub = (subId) => {
+    setTodos(todos => todos.map(t => t.id === todo.id ? {
+      ...t,
+      subTodos: t.subTodos.map(s => s.id === subId ? { ...s, text: editSubText } : s)
+    } : t));
+    setEditingSubId(null);
+  };
   return (
     <div className="border rounded p-4 bg-white shadow">
       <div className="flex items-center justify-between">
@@ -36,7 +59,35 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
             onChange={onToggleTodo}
             className="mr-2"
           />
-          <span className={todo.completed ? "line-through text-gray-400" : ""}>{todo.text}</span>
+          {isEditingTodo ? (
+            <>
+              <input
+                type="text"
+                className="border rounded px-2 py-1 mr-2"
+                value={editTodoText}
+                onChange={e => setEditTodoText(e.target.value)}
+              />
+              <button className="text-green-500 mr-2" title="Save" onClick={handleSaveTodo}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </button>
+              <button className="text-gray-400" title="Cancel" onClick={() => setIsEditingTodo(false)}>Cancel</button>
+            </>
+          ) : (
+            <>
+              <span className={todo.completed ? "line-through text-gray-400" : ""}>{todo.text}</span>
+              <button
+                className="ml-2 text-gray-500 hover:text-blue-500"
+                title="Edit Todo"
+                onClick={handleEditTodo}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path d="M17.414 2.586a2 2 0 0 0-2.828 0l-9.5 9.5A2 2 0 0 0 4 13.5V16a1 1 0 0 0 1 1h2.5a2 2 0 0 0 1.414-.586l9.5-9.5a2 2 0 0 0 0-2.828l-2-2z" />
+                </svg>
+              </button>
+            </>
+          )}
         </div>
         <div className="flex">
           <input
@@ -63,7 +114,35 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
               onChange={() => onToggleSubTodo(todo.id, sub.id)}
               className="mr-2"
             />
-            <span className={sub.completed ? "line-through text-gray-400" : ""}>{sub.text}</span>
+            {editingSubId === sub.id ? (
+              <>
+                <input
+                  type="text"
+                  className="border rounded px-2 py-1 mr-2"
+                  value={editSubText}
+                  onChange={e => setEditSubText(e.target.value)}
+                />
+                <button className="text-green-500 mr-2" title="Save" onClick={() => handleSaveSub(sub.id)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+                <button className="text-gray-400" title="Cancel" onClick={() => setEditingSubId(null)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <span className={sub.completed ? "line-through text-gray-400" : ""}>{sub.text}</span>
+                <button
+                  className="ml-2 text-gray-400 hover:text-blue-500"
+                  title="Edit Sub-Todo"
+                  onClick={() => handleEditSub(sub)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                    <path d="M17.414 2.586a2 2 0 0 0-2.828 0l-9.5 9.5A2 2 0 0 0 4 13.5V16a1 1 0 0 0 1 1h2.5a2 2 0 0 0 1.414-.586l9.5-9.5a2 2 0 0 0 0-2.828l-2-2z" />
+                  </svg>
+                </button>
+              </>
+            )}
           </li>
         ))}
       </ul>
