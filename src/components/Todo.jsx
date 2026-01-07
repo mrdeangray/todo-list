@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs, setSubTodoInputs, setTodos, onDeleteTodo }) => {
+    const [showSubInput, setShowSubInput] = useState(false);
   const [isEditingTodo, setIsEditingTodo] = useState(false);
   const [editTodoText, setEditTodoText] = useState(todo.text);
   const [editingSubId, setEditingSubId] = useState(null);
@@ -29,6 +30,7 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
       )
     );
     setSubTodoInputs(inputs => ({ ...inputs, [todo.id]: "" }));
+    setShowSubInput(false);
   };
   const handleEditTodo = () => {
     setIsEditingTodo(true);
@@ -107,19 +109,32 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
           )}
         </div>
         <div className="flex">
-          <input
-            type="text"
-            className="border rounded px-2 py-1 mr-2"
-            placeholder="Enter sub-todo..."
-            value={subInput}
-            onChange={handleInputChange}
-          />
-          <button
-            className="bg-green-500 text-white px-2 py-1 rounded"
-            onClick={handleAddSubTodo}
-          >
-            Add Sub-Todo
-          </button>
+          {!showSubInput ? (
+            <button
+              className="bg-green-500 text-white px-2 py-1 rounded flex items-center justify-center"
+              onClick={() => setShowSubInput(true)}
+              aria-label="Show Sub-Todo Input"
+            >
+              <span style={{fontSize: '1.2em', fontWeight: 'bold'}}>+</span>
+            </button>
+          ) : (
+            <>
+              <input
+                type="text"
+                className="border rounded px-2 py-1 mr-2"
+                placeholder="Enter sub-todo..."
+                value={subInput}
+                onChange={handleInputChange}
+              />
+              <button
+                className="bg-green-500 text-white px-2 py-1 rounded flex items-center justify-center"
+                onClick={handleAddSubTodo}
+                aria-label="Add Sub-Todo"
+              >
+                <span style={{fontSize: '1.2em', fontWeight: 'bold'}}>+</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
       <ul className="ml-6 mt-2">
