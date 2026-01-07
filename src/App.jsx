@@ -1,74 +1,80 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { collection, getDocs, addDoc, setDoc, doc, onSnapshot } from "firebase/firestore";
+import { db } from "./firebase";
 import TodoList from "./components/TodoList";
 
 function App() {
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      text: "Geometry Trainer",
-      completed: false,
-      subTodos: [
-        { id: 1, text: "Fix passcode bug", completed: false }
-      ]
-    }
-  ]);
+  const [todos, setTodos] = useState([]);
   const [newTodoText, setNewTodoText] = useState("");
   const [subTodoInputs, setSubTodoInputs] = useState({});
 
-  const handleAddTodo = () => {
+  // Firestore collection reference
+  const todosCol = collection(db, "todos");
+
+  // Load todos from Firestore on mount and subscribe to changes
+  useEffect(() => {
+    const unsubscribe = onSnapshot(todosCol, (snapshot) => {
+      const loaded = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      setTodos(loaded);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Add a new todo to Firestore
+  const handleAddTodo = async () => {
     if (!newTodoText.trim()) return;
-    setTodos([
-      ...todos,
-      {
-        id: Date.now(),
-        text: newTodoText,
-        completed: false,
-        subTodos: []
-      }
-    ]);
+    await addDoc(todosCol, {
+      text: newTodoText,
+      completed: false,
+      subTodos: []
+    });
     setNewTodoText("");
   };
 
-  const handleToggleTodo = (todoId) => {
-    setTodos(todos.map(todo =>
-      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-    ));
+  // Toggle todo and its subtasks in Firestore
+  const handleToggleTodo = async (todoId) => {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    const newCompleted = !todo.completed;
+    const updated = {
+      ...todo,
+      completed: newCompleted,
+      subTodos: todo.subTodos.map(sub => ({ ...sub, completed: newCompleted }))
+    };
+    await setDoc(doc(db, "todos", todoId), updated);
   };
 
-  const handleAddSubTodo = (todoId) => {
-    setTodos(todos.map(todo =>
-      todo.id === todoId
-        ? {
-            ...todo,
-            subTodos: [
-              ...todo.subTodos,
-              {
-                id: Date.now(),
-                text: `Sub-Todo ${todo.subTodos.length + 1}`,
-                completed: false
-              }
-            ]
-          }
-        : todo
-    ));
+  // Add a sub-todo to Firestore
+  const handleAddSubTodo = async (todoId) => {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    const newSub = {
+      id: Date.now(),
+      text: `Sub-Todo ${todo.subTodos.length + 1}`,
+      completed: false
+    };
+    const updated = {
+      ...todo,
+      subTodos: [...todo.subTodos, newSub]
+    };
+    await setDoc(doc(db, "todos", todoId), updated);
   };
 
-  const handleToggleSubTodo = (todoId, subTodoId) => {
-    setTodos(todos.map(todo => {
-      if (todo.id === todoId) {
-        const updatedSubTodos = todo.subTodos.map(sub =>
-          sub.id === subTodoId ? { ...sub, completed: !sub.completed } : sub
-        );
-        const allCompleted = updatedSubTodos.length > 0 && updatedSubTodos.every(sub => sub.completed);
-        return {
-          ...todo,
-          subTodos: updatedSubTodos,
-          completed: allCompleted ? true : todo.completed
-        };
-      }
-      return todo;
-    }));
+  // Toggle a sub-todo in Firestore
+  const handleToggleSubTodo = async (todoId, subTodoId) => {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    const updatedSubTodos = todo.subTodos.map(sub =>
+      sub.id === subTodoId ? { ...sub, completed: !sub.completed } : sub
+    );
+    const allCompleted = updatedSubTodos.length > 0 && updatedSubTodos.every(sub => sub.completed);
+    const updated = {
+      ...todo,
+      subTodos: updatedSubTodos,
+      completed: allCompleted ? true : todo.completed
+    };
+    await setDoc(doc(db, "todos", todoId), updated);
   };
 
   return (
