@@ -5,9 +5,9 @@ const Header = () => (
     <nav className="container mx-auto flex items-center justify-between py-3 px-4">
       <div className="text-lg font-bold tracking-wide">Todo List</div>
       <ul className="flex space-x-6">
-        <li>
+                <li>
           <a
-            href="https://geometry-trainer.com/"
+            href="https://mrdeangray.github.io/geometry-trainer/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:underline hover:text-yellow-300 transition-colors"
@@ -17,7 +17,7 @@ const Header = () => (
         </li>
         <li>
           <a
-            href="https://mrdeangray.github.io/geometry-trainer/"
+            href="https://geometry-trainer.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:underline hover:text-yellow-300 transition-colors"
@@ -25,6 +25,7 @@ const Header = () => (
             Geometry Trainer2
           </a>
         </li>
+
         <li>
           <a
             href="https://mrdeangray.github.io/contador-de-repeticiones/"
