@@ -111,11 +111,11 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
         <div className="flex">
           {!showSubInput ? (
             <button
-              className="bg-green-500 text-white px-2 py-1 rounded flex items-center justify-center"
+              className="bg-green-500 text-white rounded-full flex items-center justify-center w-6 h-6"
               onClick={() => setShowSubInput(true)}
               aria-label="Show Sub-Todo Input"
             >
-              <span style={{fontSize: '1.2em', fontWeight: 'bold'}}>+</span>
+              <span style={{fontSize: '1em', fontWeight: 'bold', lineHeight: '1'}}>+</span>
             </button>
           ) : (
             <>
@@ -127,11 +127,11 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
                 onChange={handleInputChange}
               />
               <button
-                className="bg-green-500 text-white px-2 py-1 rounded flex items-center justify-center"
+                className="bg-green-500 text-white rounded-full flex items-center justify-center w-6 h-6"
                 onClick={handleAddSubTodo}
                 aria-label="Add Sub-Todo"
               >
-                <span style={{fontSize: '1.2em', fontWeight: 'bold'}}>+</span>
+                <span style={{fontSize: '1em', fontWeight: 'bold', lineHeight: '1'}}>+</span>
               </button>
             </>
           )}
