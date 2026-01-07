@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs, setSubTodoInputs, setTodos }) => {
+const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs, setSubTodoInputs, setTodos, onDeleteTodo }) => {
   const [isEditingTodo, setIsEditingTodo] = useState(false);
   const [editTodoText, setEditTodoText] = useState(todo.text);
   const [editingSubId, setEditingSubId] = useState(null);
@@ -49,6 +49,13 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
     } : t));
     setEditingSubId(null);
   };
+  const handleDeleteSub = (subId) => {
+    setTodos(todos => todos.map(t => t.id === todo.id ? {
+      ...t,
+      subTodos: t.subTodos.filter(s => s.id !== subId)
+    } : t));
+    setEditingSubId(null);
+  };
   return (
     <div className="border rounded p-4 bg-white shadow">
       <div className="flex items-center justify-between">
@@ -73,6 +80,16 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
                 </svg>
               </button>
               <button className="text-gray-400" title="Cancel" onClick={() => setIsEditingTodo(false)}>Cancel</button>
+              <button
+                className="ml-2 text-gray-500 hover:text-blue-500"
+                title="Delete Todo"
+                onClick={() => onDeleteTodo(todo.id)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zm3.46-9.12a1 1 0 0 1 1.41 0l1.13 1.13 1.13-1.13a1 1 0 1 1 1.41 1.41l-1.13 1.13 1.13 1.13a1 1 0 0 1-1.41 1.41l-1.13-1.13-1.13 1.13a1 1 0 0 1-1.41-1.41l1.13-1.13-1.13-1.13a1 1 0 0 1 0-1.41z" />
+                  <path d="M18 4h-3.5l-1-1h-5l-1 1H6a1 1 0 0 0 0 2h12a1 1 0 0 0 0-2z" />
+                </svg>
+              </button>
             </>
           ) : (
             <>
@@ -128,6 +145,16 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
                   </svg>
                 </button>
                 <button className="text-gray-400" title="Cancel" onClick={() => setEditingSubId(null)}>Cancel</button>
+                <button
+                  className="ml-2 text-gray-500 hover:text-blue-500"
+                  title="Delete Sub-Todo"
+                  onClick={() => handleDeleteSub(sub.id)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zm3.46-9.12a1 1 0 0 1 1.41 0l1.13 1.13 1.13-1.13a1 1 0 1 1 1.41 1.41l-1.13 1.13 1.13 1.13a1 1 0 0 1-1.41 1.41l-1.13-1.13-1.13 1.13a1 1 0 0 1-1.41-1.41l1.13-1.13-1.13-1.13a1 1 0 0 1 0-1.41z" />
+                    <path d="M18 4h-3.5l-1-1h-5l-1 1H6a1 1 0 0 0 0 2h12a1 1 0 0 0 0-2z" />
+                  </svg>
+                </button>
               </>
             ) : (
               <>
