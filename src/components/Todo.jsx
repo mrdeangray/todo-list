@@ -119,6 +119,11 @@ const Todo = ({ todo, onAddSubTodo, onToggleTodo, onToggleSubTodo, subTodoInputs
                 placeholder="Enter sub-todo..."
                 value={subInput}
                 onChange={handleInputChange}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    handleAddSubTodo();
+                  }
+                }}
               />
               <button
                 className="bg-green-500 text-white rounded-full flex items-center justify-center w-6 h-6 mr-1"
